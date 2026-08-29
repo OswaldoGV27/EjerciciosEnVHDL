@@ -1,0 +1,7 @@
+ENTITY cod_prio3a8 IS
+    PORT (
+	entrada : in std_logic_vector (7 downto 0) ; 
+	enable : in std_logic  ; 
+	salida : inout std_logic_vector (2 downto 0)
+    ) ;
+END cod_prio3a8 ;

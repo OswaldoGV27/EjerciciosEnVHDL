@@ -1,0 +1,2 @@
+BINARIOA7SEG.vhd #Entity bin7seg 4
+BINARIOA7SEG.vhd #Architecture bin7seg bin7seg 15

@@ -1,0 +1,1 @@
+-m -yu -e10 -w100 -o2 -ygs -fP -v10 -dc22v10 -ppalce22v10-25pc/pi -b COD8A3.vhd -u COD8A3.hie 

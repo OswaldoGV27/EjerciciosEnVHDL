@@ -1,0 +1,33 @@
+library ieee;
+use ieee.std_logic_1164.all;
+
+entity decodificador_3_a_8 is
+    Port (
+        entrada : in std_logic_vector(2 downto 0);
+        habilitacion : in std_logic;
+        salida : out std_logic_vector(7 downto 0));
+end decodificador_3_a_8;
+
+architecture DEC3_8 of decodificador_3_a_8 is
+begin
+ 
+    process (entrada, habilitacion)
+    begin
+        
+if habilitacion = '0' then
+            case entrada is
+                when "000" => salida <= "10000000"; 
+                when "001" => salida <= "01000000";
+                when "010" => salida <= "00100000";
+                when "011" => salida <= "00010000";
+                when "100" => salida <= "00001000"; 
+                when "101" => salida <= "00000100";
+                when "110" => salida <= "00000010";
+                when "111" => salida <= "00000001";
+                when others => salida <= "00000000";
+            end case;
+        else
+            salida <= "11111111";
+        end if;
+    end process;
+end DEC3_8;

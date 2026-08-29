@@ -1,0 +1,7 @@
+ENTITY decodificador_3_a_8 IS
+    PORT (
+	entrada : in std_logic_vector (2 downto 0) ; 
+	habilitacion : in std_logic  ; 
+	salida : inout std_logic_vector (7 downto 0)
+    ) ;
+END decodificador_3_a_8 ;

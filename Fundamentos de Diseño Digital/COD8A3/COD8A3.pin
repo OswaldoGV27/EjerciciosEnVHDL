@@ -1,0 +1,18 @@
+Cypress Package: palce22v10-25pc/pi  PinOut File: COD8A3.pin
+
+This file was created on 12/17/2023 at 21:43:03 
+by PLA2JED.EXE    31/03/2000  [v4.02 ] 6.3 IR 35
+
+==========
+entrada(7) in <> Enabled Normal 1 <> [Auto] 
+entrada(6) in <> Enabled Normal 2 <> [Auto] 
+entrada(5) in <> Enabled Normal 3 <> [Auto] 
+entrada(4) in <> Enabled Normal 4 <> [Auto] 
+entrada(3) in <> Enabled Normal 5 <> [Auto] 
+entrada(2) in <> Enabled Normal 6 <> [Auto] 
+entrada(1) in <> Enabled Normal 7 <> [Auto] 
+entrada(0) in <> Enabled Normal 8 <> [Auto] 
+enable in <> Enabled Normal 9 <> [Auto] 
+salida(2) out <> Enabled Normal 14 <> [Auto] 
+salida(0) out <> Enabled Normal 15 <> [Auto] 
+salida(1) out <> Enabled Normal 23 <> [Auto] 

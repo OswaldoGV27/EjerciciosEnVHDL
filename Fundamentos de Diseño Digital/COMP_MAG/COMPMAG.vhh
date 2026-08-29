@@ -1,0 +1,9 @@
+ENTITY comparador IS
+    PORT (
+	a : in std_logic_vector (1 downto 0) ; 
+	b : in std_logic_vector (1 downto 0) ; 
+	f1 : inout std_logic  ; 
+	f2 : inout std_logic  ; 
+	f3 : inout std_logic 
+    ) ;
+END comparador ;

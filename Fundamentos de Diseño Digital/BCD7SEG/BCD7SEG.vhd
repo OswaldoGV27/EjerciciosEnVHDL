@@ -1,0 +1,24 @@
+library ieee;
+use ieee.std_logic_1164.all;
+
+entity BCD7SEG is port(A, B, C, D: in std_logic;
+F1: out std_logic;
+F2: out std_logic;
+F3: out std_logic;
+F4: out std_logic;
+F5: out std_logic;
+F6: out std_logic;
+F7: out std_logic);
+end BCD7SEG;
+
+architecture BCD7SEG of BCD7SEG is begin
+
+F1 <=((NOT B) AND (NOT D)) OR (B AND D) OR (C) OR (A);
+F2 <=((NOT C) AND (NOT D)) OR (C AND D) OR (NOT B);
+F3 <=(NOT C) OR (D) OR (B);
+F4 <=((NOT B) AND (NOT D)) OR ((NOT B) AND C) OR (C AND (NOT D)) OR (B AND (NOT C) AND D);
+F5 <=((NOT B) AND (NOT D)) OR (C AND (NOT D));
+F6 <=(A) OR (B AND (NOT C)) OR (B AND (NOT D)) OR ((NOT C) AND (NOT D));
+F7 <=(A) OR (B AND (NOT C)) OR ((NOT B) AND C) OR (C AND (NOT D));
+
+end BCD7SEG;

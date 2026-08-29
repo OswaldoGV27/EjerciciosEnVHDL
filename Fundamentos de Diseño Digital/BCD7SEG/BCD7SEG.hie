@@ -1,0 +1,2 @@
+BCD7SEG.vhd #Entity bcd7seg 4
+BCD7SEG.vhd #Architecture bcd7seg bcd7seg 14
