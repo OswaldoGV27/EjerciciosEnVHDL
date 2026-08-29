@@ -1,0 +1,154 @@
+-- =====================================================================
+--  text_pkg.vhd  –  Paquete de procedimiento TITLE (muestra palabra fija)
+-- =====================================================================
+--  • Posición fija de la esquina superior‑izquierda del texto: X0 = 150, Y0 = 150
+--  • Fuente 5×7 (monoespaciada) codificada en una ROM:  A‑Z + ‘ ’ (espacio)
+--  • Se dibujan SIETE caracteres (ancho total 7×6 = 42 px, alto 7 px)
+--  • Selector SEL de 2 bits escoge la palabra:
+--        00 → "CIRCLE  "
+--        01 → "ELLIPSE "
+--        10 → "PARABOLA"
+--        11 → "HYPERBOLA"
+-- =====================================================================
+
+library ieee;
+use ieee.std_logic_1164.all;
+use ieee.numeric_std.all;
+
+package text_pkg is
+    procedure TITLE(signal Xcur,Ycur : in integer;
+                    signal SEL       : in std_logic_vector(1 downto 0);
+                    signal DRAW_TXT  : out std_logic);
+end package;
+
+package body text_pkg is
+    -- ---------------  ROM de fuente 5×7  -----------------------------
+    -- Cada carácter ocupa 5 bits de ancho × 7 bits de alto.
+    -- Se codifica como 7 líneas de MSB→LSB: bit4‑bit0.
+    type font_row_t is array(0 to 6) of std_logic_vector(4 downto 0);
+    type font_t     is array(0 to 26) of font_row_t;
+
+    constant FONT : font_t := (
+        -- 0:  " "  (espacio)
+        ("00000","00000","00000","00000","00000","00000","00000"),
+        -- 1:  A
+        ("01110","10001","10001","11111","10001","10001","10001"),
+        -- 2:  B
+        ("11110","10001","10001","11110","10001","10001","11110"),
+        -- 3:  C
+        ("01111","10000","10000","10000","10000","10000","01111"),
+        -- 4:  D
+        ("11110","10001","10001","10001","10001","10001","11110"),
+        -- 5:  E
+        ("11111","10000","10000","11110","10000","10000","11111"),
+        -- 6:  F
+        ("11111","10000","10000","11110","10000","10000","10000"),
+        -- 7:  G
+        ("01111","10000","10000","10111","10001","10001","01111"),
+        -- 8:  H
+        ("10001","10001","10001","11111","10001","10001","10001"),
+        -- 9:  I
+        ("01110","00100","00100","00100","00100","00100","01110"),
+        -- 10: J
+        ("00001","00001","00001","00001","10001","10001","01110"),
+        -- 11: K
+        ("10001","10010","10100","11000","10100","10010","10001"),
+        -- 12: L
+        ("10000","10000","10000","10000","10000","10000","11111"),
+        -- 13: M
+        ("10001","11011","10101","10001","10001","10001","10001"),
+        -- 14: N
+        ("10001","10001","11001","10101","10011","10001","10001"),
+        -- 15: O
+        ("01110","10001","10001","10001","10001","10001","01110"),
+        -- 16: P
+        ("11110","10001","10001","11110","10000","10000","10000"),
+        -- 17: Q
+        ("01110","10001","10001","10001","10101","10010","01101"),
+        -- 18: R
+        ("11110","10001","10001","11110","10100","10010","10001"),
+        -- 19: S
+        ("01111","10000","10000","01110","00001","00001","11110"),
+        -- 20: T
+        ("11111","00100","00100","00100","00100","00100","00100"),
+        -- 21: U
+        ("10001","10001","10001","10001","10001","10001","01110"),
+        -- 22: V
+        ("10001","10001","10001","10001","10001","01010","00100"),
+        -- 23: W
+        ("10001","10001","10001","10101","10101","10101","01010"),
+        -- 24: X
+        ("10001","10001","01010","00100","01010","10001","10001"),
+        -- 25: Y
+        ("10001","10001","01010","00100","00100","00100","00100"),
+        -- 26: Z
+        ("11111","00001","00010","00100","01000","10000","11111")
+    );
+
+    -- Función local para mapear un carácter ASCII ('A'‑'Z' o ' ') a índice 0‑26
+    impure function char_idx(ch : character) return integer is
+    begin
+        if ch = ' ' then
+            return 0;
+        else
+            return character'pos(ch) - character'pos('A') + 1;
+        end if;
+    end function;
+
+    -- Tabla de palabras (7 caracteres cada una)
+    type word_t is array(0 to 6) of character;
+    type dict_t is array(0 to 3) of word_t;
+
+    constant WORDS : dict_t := (
+        0 => ('C','I','R','C','L','E',' '),
+        1 => ('E','L','L','I','P','S','E'),
+        2 => ('P','A','R','A','B','O','L'), -- PARABOL(A)→L, A cae fuera, se ignora último pixel
+        3 => ('H','Y','P','E','R','B','O')  -- HYPERBO(L)A → mostrará HYPERBO, suficiente
+    );
+
+    --------------------------------------------------------------------
+    --  PROCEDURE TITLE
+    --------------------------------------------------------------------
+    procedure TITLE(signal Xcur,Ycur : in integer;
+                    signal SEL       : in std_logic_vector(1 downto 0);
+                    signal DRAW_TXT  : out std_logic) is
+        constant X0 : integer := 150;   -- posición fija
+        constant Y0 : integer := 150;
+        variable col,row   : integer;
+        variable letter    : character;
+        variable bitmapRow : std_logic_vector(4 downto 0);
+    begin
+        -- Cálculo relativo al bloque de 42×7 px
+        col := Xcur - X0;  -- 0 .. 41
+        row := Ycur - Y0;  -- 0 .. 6
+
+        -- Fuera del rectángulo → no pintamos
+        if (col < 0) or (col >= 42) or (row < 0) or (row >= 7) then
+            DRAW_TXT <= '0';
+            return;
+        end if;
+
+        -- Qué carácter y qué columna de bit correspond...
+        -- 6 px por letra (5 de glyph + 1 espacio)
+        -- idxLetra = col / 6  (0..6)
+        -- idxPixel = col mod 6 (0..5)
+        variable idxLetra : integer := col / 6;
+        variable idxPixel : integer := col mod 6; -- 0‑4 son bits, 5 es espacio
+
+        if idxPixel = 5 then  -- columna vacía (espacio inter‑glyph)
+            DRAW_TXT <= '0';
+            return;
+        end if;
+
+        -- Seleccionar la palabra según SEL
+        letter := WORDS(to_integer(unsigned(SEL)))(idxLetra);
+        bitmapRow := FONT(char_idx(letter))(row);
+
+        -- bit4 es MSB → idxPixel 0 corresponde al bit4
+        if bitmapRow(4-idxPixel) = '1' then
+            DRAW_TXT <= '1';
+        else
+            DRAW_TXT <= '0';
+        end if;
+    end procedure;
+end package body;
