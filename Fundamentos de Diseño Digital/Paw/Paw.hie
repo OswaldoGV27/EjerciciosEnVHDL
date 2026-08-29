@@ -1,0 +1,2 @@
+PawP.vhd #Entity paw 4
+PawP.vhd #Architecture patroll paw 8

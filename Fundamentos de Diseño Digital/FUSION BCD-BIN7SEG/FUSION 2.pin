@@ -1,0 +1,18 @@
+Cypress Package: palce22v10-25pc/pi  PinOut File: FUSION 2.pin
+
+This file was created on 11/07/2023 at 04:18:14 
+by PLA2JED.EXE    31/03/2000  [v4.02 ] 6.3 IR 35
+
+==========
+d in <> Enabled Normal 1 <> [Auto] 
+ctrl in <> Enabled Normal 2 <> [Auto] 
+c in <> Enabled Normal 3 <> [Auto] 
+b in <> Enabled Normal 4 <> [Auto] 
+a in <> Enabled Normal 5 <> [Auto] 
+seg(5) out <> Enabled Normal 14 <> [Auto] 
+seg(1) out <> Enabled Normal 15 <> [Auto] 
+seg(2) out <> Enabled Normal 16 <> [Auto] 
+seg(6) out <> Enabled Normal 17 <> [Auto] 
+seg(4) out <> Enabled Normal 21 <> [Auto] 
+seg(0) out <> Enabled Normal 22 <> [Auto] 
+seg(3) out <> Enabled Normal 23 <> [Auto] 

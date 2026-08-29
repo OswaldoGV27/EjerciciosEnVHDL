@@ -1,0 +1,10 @@
+ENTITY ctrl7seg IS
+    PORT (
+	ctrl : in std_logic  ; 
+	a : in std_logic  ; 
+	b : in std_logic  ; 
+	c : in std_logic  ; 
+	d : in std_logic  ; 
+	seg : inout std_logic_vector (6 downto 0)
+    ) ;
+END ctrl7seg ;
